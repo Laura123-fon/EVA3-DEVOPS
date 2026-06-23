@@ -22,6 +22,6 @@ USER spring:spring
 COPY --from=build /app/target/*.jar app.jar
 
 # PUERTO DE DOCUMENTACIÓN
-EXPOSE 8081
+EXPOSE 8092
 
 CMD ["java", "-jar", "app.jar"]
