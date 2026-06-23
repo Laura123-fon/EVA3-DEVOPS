@@ -2,24 +2,26 @@
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Entramos y copiamos desde la subcarpeta correcta de Ventas
-COPY Springboot-API-REST/pom.xml .
+# El comodín "*/" extrae el pom.xml sin importar el nombre de la subcarpeta
+COPY */pom.xml ./
 RUN mvn dependency:go-offline -B
 
-COPY Springboot-API-REST/src ./src
+# Extrae la carpeta src sin importar el nombre de la subcarpeta
+COPY */src ./src
 RUN mvn clean package -DskipTests
 
-# --- ETAPA 2: Ejecución (Imagen Liviana de Producción) ---
+# --- ETAPA 2: Ejecución ---
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Requisito Pauta: Crear un usuario no-root por seguridad
+# Requisito Pauta: Usuario no-root para mayor seguridad
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Copiamos el archivo .jar generado
+# Copiamos el .jar generado al contenedor final
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 8080
+# PUERTO DE DOCUMENTACIÓN
+EXPOSE 8081
 
 CMD ["java", "-jar", "app.jar"]
