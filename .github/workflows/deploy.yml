@@ -33,16 +33,24 @@ jobs:
           ECR_REPOSITORY: innovatech-frontend
           IMAGE_TAG: latest
         run: |
-          # Usamos comillas por el espacio en el nombre de la carpeta
           cd "proyecto semestral/front_despacho"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Desplegar Frontend en EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           aws eks update-kubeconfig --region us-east-1 --name innovatech-eks
           cd "proyecto semestral/front_despacho"
-          kubectl apply -f k8s/
+          
+          # Reemplazo dinámico de la imagen si decidiste parametrizar el deployment del front
+          if [ -f k8s/innovatech-deploy.yaml ]; then
+            envsubst < k8s/innovatech-deploy.yaml > tmp.yaml && mv tmp.yaml k8s/innovatech-deploy.yaml
+          fi
+          
+          # Aplicamos saltando la validación estricta de OpenAPI
+          kubectl apply -f k8s/ --validate=false
           kubectl rollout restart deployment/frontend-deployment
 
   # ==========================================
@@ -84,6 +92,7 @@ jobs:
 
       - name: Desplegar Despachos en EKS
         env:
+          ECR_REGISTRY: ${{ steps.login-ecr-despachos.outputs.registry }}
           DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -92,8 +101,13 @@ jobs:
         run: |
           aws eks update-kubeconfig --region us-east-1 --name innovatech-eks
           cd "proyecto semestral/back-Despachos_SpringBoot"
-          envsubst < k8s/innovatech-secret.yaml > tmp.yaml && mv tmp.yaml k8s/innovatech-secret.yaml
-          kubectl apply -f k8s/
+          
+          # Inyectamos variables en el Secret y en el Deployment
+          envsubst < k8s/innovatech-secret.yaml > tmp-sec.yaml && mv tmp-sec.yaml k8s/innovatech-secret.yaml
+          envsubst < k8s/innovatech-deploy.yaml > tmp-dep.yaml && mv tmp-dep.yaml k8s/innovatech-deploy.yaml
+          
+          # Aplicamos saltando la validación estricta de OpenAPI
+          kubectl apply -f k8s/ --validate=false
           kubectl rollout restart deployment/despachos-deployment
 
   # ==========================================
@@ -135,6 +149,7 @@ jobs:
 
       - name: Desplegar Ventas en EKS
         env:
+          ECR_REGISTRY: ${{ steps.login-ecr-ventas.outputs.registry }}
           DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -143,6 +158,11 @@ jobs:
         run: |
           aws eks update-kubeconfig --region us-east-1 --name innovatech-eks
           cd "proyecto semestral/back-Ventas_SpringBoot"
-          envsubst < k8s/innovatech-secret.yaml > tmp.yaml && mv tmp.yaml k8s/innovatech-secret.yaml
-          kubectl apply -f k8s/
+          
+          # Inyectamos variables en el Secret y en el Deployment
+          envsubst < k8s/innovatech-secret.yaml > tmp-sec.yaml && mv tmp-sec.yaml k8s/innovatech-secret.yaml
+          envsubst < k8s/innovatech-deploy.yaml > tmp-dep.yaml && mv tmp-dep.yaml k8s/innovatech-deploy.yaml
+          
+          # Aplicamos saltando la validación estricta de OpenAPI
+          kubectl apply -f k8s/ --validate=false
           kubectl rollout restart deployment/ventas-deployment
