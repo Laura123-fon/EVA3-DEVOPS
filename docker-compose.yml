@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   # 1. BASE DE DATOS (MySQL para los Microservicios)
   base-datos:
@@ -28,9 +27,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=user_duoc
       - SPRING_DATASOURCE_PASSWORD=password_duoc
     depends_on:
-      - base-datos
-    networks:
+      base-datos:
+        condition: service_healthy
+    ne tworks:
       - red_devops
+      
 
   # 3. BACKEND: DESPACHOS (Java Spring Boot)
   back-despachos:
@@ -43,7 +44,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=user_duoc
       - SPRING_DATASOURCE_PASSWORD=password_duoc
     depends_on:
-      - base-datos
+      base-datos:
+        condition: service_healthy
     networks:
       - red_devops
 
