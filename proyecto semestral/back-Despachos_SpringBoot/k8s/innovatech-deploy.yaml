@@ -19,7 +19,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://$(DB_ENDPOINT):$(DB_PORT)/$(DB_NAME)"
+              value: "jdbc:mysql://${DB_ENDPOINT}:${DB_PORT}/${DB_NAME}"
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
