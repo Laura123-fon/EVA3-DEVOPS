@@ -34,18 +34,20 @@ services:
 
   # 3. BACKEND: DESPACHOS (Java Spring Boot)
   back-despachos:
-    build: "./proyecto semestral/back-Despachos_SpringBoot"
-    container_name: api_despachos
-    ports:
-      - "8081:8081"
-    environment:
-      - DB_URL=jdbc:mysql://base-datos:3306/db_despacho_ventas?createDatabaseIfNotExist=true
-      - DB_USERNAME=user_duoc
-      - DB_PASSWORD=password_duoc
-    depends_on:
-      - base-datos
-    networks:
-      - red_devops
+      build: "./proyecto_semestral/back-Despachos_SpringBoot"
+      container_name: api_despachos
+      ports:
+        - "8081:8081"
+      environment:
+        - DB_ENDPOINT=base-datos
+        - DB_PORT=3306
+        - DB_NAME=db_despacho_ventas
+        - DB_USERNAME=user_duoc
+        - DB_PASSWORD=password_duoc
+      depends_on:
+        - base-datos
+      networks:
+        - red_devops
 
   # 4. FRONTEND (Nginx sirviendo la App de Despacho)
   frontend:
