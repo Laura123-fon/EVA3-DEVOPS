@@ -39,9 +39,9 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://base-datos:3306/db_despacho_ventas?createDatabaseIfNotExist=true
-      - SPRING_DATASOURCE_USERNAME=user_duoc
-      - SPRING_DATASOURCE_PASSWORD=password_duoc
+      - DB_URL=jdbc:mysql://base-datos:3306/db_despacho_ventas?createDatabaseIfNotExist=true
+      - DB_USERNAME=user_duoc
+      - DB_PASSWORD=password_duoc
     depends_on:
       - base-datos
     networks:
