@@ -41,7 +41,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          aws eks update-kubeconfig --region us-east-1 --name innovatech-eks
+          aws eks update-kubeconfig --region us-east-1 --name DEVOPS-EKS
           cd "proyecto semestral/front_despacho"
           
           # Reemplazo dinámico de la imagen si decidiste parametrizar el deployment del front
@@ -99,7 +99,7 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          aws eks update-kubeconfig --region us-east-1 --name innovatech-eks
+          aws eks update-kubeconfig --region us-east-1 --name DEVOPS-EKS
           cd "proyecto semestral/back-Despachos_SpringBoot"
           
           # Inyectamos variables en el Secret y en el Deployment
@@ -156,7 +156,7 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          aws eks update-kubeconfig --region us-east-1 --name innovatech-eks
+          aws eks update-kubeconfig --region us-east-1 --name DEVOPS-EKS
           cd "proyecto semestral/back-Ventas_SpringBoot"
           
           # Inyectamos variables en el Secret y en el Deployment
