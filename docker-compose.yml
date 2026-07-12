@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   # 1. BASE DE DATOS (MySQL para los Microservicios)
   base-datos:
@@ -24,14 +25,12 @@ services:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://base-datos:3306/db_despacho_ventas?createDatabaseIfNotExist=true
-      - DB_USERNAME=user_duoc
-      - DB_PASSWORD=password_duoc
+      - SPRING_DATASOURCE_USERNAME=user_duoc
+      - SPRING_DATASOURCE_PASSWORD=password_duoc
     depends_on:
-      base-datos:
-        condition: service_healthy
-    ne tworks:
+      - base-datos
+    networks:
       - red_devops
-      
 
   # 3. BACKEND: DESPACHOS (Java Spring Boot)
   back-despachos:
@@ -41,11 +40,10 @@ services:
       - "8081:8081"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://base-datos:3306/db_despacho_ventas?createDatabaseIfNotExist=true
-      - DB_USERNAME=user_duoc
-      - _PASSWORD=password_duoc
+      - SPRING_DATASOURCE_USERNAME=user_duoc
+      - SPRING_DATASOURCE_PASSWORD=password_duoc
     depends_on:
-      base-datos:
-        condition: service_healthy
+      - base-datos
     networks:
       - red_devops
 
